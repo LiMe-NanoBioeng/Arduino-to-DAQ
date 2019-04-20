@@ -21,32 +21,7 @@ import time, datetime, os, serial#import matplotlib.pyplot as plt
 ser = serial.Serial('COM3', 9600, timeout=1)
 
 # In[]
-class AI():  
-    def DefFile(): # Making Folder for saving this result
-        global FolderName1
-        global FileName1
-        global VoltageFile
-    
-        FolderName1='C:/Users/hirof/Documents'
-        # FolderName1='C:/Users/lab.LABNOTE/Documents'
-            
-        FolderName1=FolderName1+"/"+str(datetime.datetime.today().strftime("%Y%m%d"))
-        os.makedirs(FolderName1,exist_ok=True)
-        
-        FileName=str(datetime.datetime.today().strftime("%Y%m%d_%H%M%S"))+'_exp'
-        FileName1=FolderName1+"/"+FileName+str(1+len([x for x in os.listdir(FolderName1) if x.endswith(".csv")])).zfill(4)
-        return(FileName1)
-        
-    def NIDAQAI(x,y):
-        import nidaqmx
-        with nidaqmx.Task() as task:
-            
-            task.ai_channels.add_ai_voltage_chan("Dev1/ai0:3",
-                                                    terminal_config=nidaqmx.constants.TerminalConfiguration.RSE)
-            x.append(time.time())
-            y.extend(task.read(number_of_samples_per_channel=1))
-            return(x,y)
-            
+class Arduino():  
     def ArduinoAI(x,y,c):
 #        import serial
         #ser = serial.Serial('COM3',9600,timeout=5)
