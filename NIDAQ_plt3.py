@@ -12,15 +12,11 @@ Created on Fri Dec 21 17:01:17 2018
 @author: lab
 """
 
-# In[]
-#import time, datetime, os#, nidaqmx#, itertools
-import time, datetime, os, serial#import matplotlib.pyplot as plt
-#from matplotlib import animation
-#import numpy as np
+import time, datetime, os, serial
 
 ser = serial.Serial('COM3', 9600, timeout=1)
 
-# In[]
+
 class Arduino():  
     def ArduinoAI(x,y,c):
 #        import serial
