@@ -3,16 +3,17 @@
 // by Hiroyuki OGAWA
 
 // 20190227 Release1.1 AnalogInputで1チャンネルのみ指定ができない問題を修正
-
 //by Junichi Murai　20240430
+
 //difine ten valves 
 const int Valvepins[]={3,7,34,1,33,25,24,23,22,21};
-const int numValves = 10;
+const int numValves = sizeof(Valvepins);
 
 //　setup for ten valves
 void setup() {
   for(int i =0; i<numValves;i++){
-   pinMode(Valvepins[i],OUTPUT);}
+   pinMode(Valvepins[i],OUTPUT);
+  }
 
   Serial.begin(9600); //open serialport by 9600bps
 
@@ -89,11 +90,6 @@ void DigtalOUT(){
   }
 }
 
-void DigtalIN(){
-  //DigtalINの処理
-  //Serial.write('N');
-  //Serial.write('\n'); 
-  }
 
 // "AI1:3"というフォーマットの文字列をベースとして設定する
 //AnalogINの処理
