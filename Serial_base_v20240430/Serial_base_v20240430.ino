@@ -8,16 +8,18 @@
 //difine ten valves 
 const int Valvepins[]={3,7,34,1,33,25,24,23,22,21};
 const int numValves = sizeof(Valvepins);
+int val = 0;
 
 //　setup for ten valves
 void setup() {
   for(int i =0; i<numValves;i++){
    pinMode(Valvepins[i],OUTPUT);
-  }
+  
 
   Serial.begin(9600); //open serialport by 9600bps
 
    digitalWrite(Valvepins[i],HIGH);
+   }
 
 }
 
@@ -40,11 +42,11 @@ void checkUserInteraction(){
       switch(tempIO){
         case 'I':
         // 読み込みデータが　I の場合
-          DigtalIN();
+          DigitalIN();
           break;
         case 'O':
         // 読み込みデータが　O の場合
-          DigtalOUT();
+          DigitalOUT();
           break;
         }
      }
@@ -69,8 +71,16 @@ void checkUserInteraction(){
   }
 }
 
+void DigitalIN(){
+  //Digitalinの処理
+  //Serial.write('N');
+  //Serial.write('\n');
+}
+
+
+
 // "DO1H"というフォーマットの文字列をベースとして設定する
-void DigtalOUT(){
+void DigitalOUT(){
 
   // 3文字目はバルブ番号
   int vNumD = Serial.parseInt();
