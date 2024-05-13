@@ -3,10 +3,11 @@
 // by Hiroyuki OGAWA
 
 // 20190227 Release1.1 AnalogInputで1チャンネルのみ指定ができない問題を修正
-//by Junichi Murai　20240430
+
+//by Junichi Murai　20240513  modify for ten valves
 
 //difine ten valves 
-const int Valvepins[]={3,7,34,1,33,25,24,23,22,21};
+const int Valvepins[]={1,2,15,16,14,22,21,20,19,18};
 const int numValves = sizeof(Valvepins);
 int val = 0;
 
@@ -14,13 +15,10 @@ int val = 0;
 void setup() {
   for(int i =0; i<numValves;i++){
    pinMode(Valvepins[i],OUTPUT);
-  
-
-  Serial.begin(9600); //open serialport by 9600bps
 
    digitalWrite(Valvepins[i],HIGH);
    }
-
+ Serial.begin(9600); //open serialport by 9600bps
 }
 
 void loop() {
