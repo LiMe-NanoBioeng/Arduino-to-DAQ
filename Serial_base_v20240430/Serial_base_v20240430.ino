@@ -10,6 +10,7 @@
 const int Valvepins[]={1,2,15,16,14,22,21,20,19,18};
 const int numValves = sizeof(Valvepins);
 int val = 0;
+const int pressReg=4;
 
 //　setup for ten valves
 void setup() {
@@ -19,11 +20,13 @@ void setup() {
    digitalWrite(Valvepins[i],HIGH);
    }
  Serial.begin(9600); //open serialport by 9600bps
+ pinMode(pressReg,HIGH);
 }
 
 void loop() {
 
 checkUserInteraction();
+analogWrite(pressReg,128);
 
 }
 
