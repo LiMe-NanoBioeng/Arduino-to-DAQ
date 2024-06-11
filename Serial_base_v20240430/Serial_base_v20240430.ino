@@ -5,7 +5,7 @@
 // 20190227 Release1.1 AnalogInputで1チャンネルのみ指定ができない問題を修正
 
 //by Junichi Murai　20240513  modify for ten valves
-//by :K2 20240530 modify for pressure regulator pin 
+//by :K2(EEprotocol) 20240530 modify for pressure regulator pin 
 
 //difine ten valves 
 const int Valvepins[]={1,2,15,16,14,22,21,20,19,18};
@@ -21,7 +21,6 @@ void setup() {
    digitalWrite(Valvepins[i],HIGH);
    }
  Serial.begin(9600); //open serialport by 9600bps
- pinMode(pressReg,HIGH);
 }
 
 void loop() {
