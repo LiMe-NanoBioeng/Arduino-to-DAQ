@@ -99,7 +99,7 @@ void DigitalOUT(){
       digitalWrite(Valvepins[vNumD], LOW);
       break;
   }
-  //Serial.println(Valvepins[vNumD]);
+  Serial.println('R');
 }
 
 
