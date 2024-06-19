@@ -9,9 +9,9 @@
 
 //difine ten valves 
 const int Valvepins[]={1,2,15,16,14,22,21,20,19,18};
-const int numValves = sizeof(Valvepins);
+const int numValves = 10;
 int val = 0;
-const int pressReg=4;
+//const int pressReg=4;
 
 //　setup for ten valves
 void setup() {
@@ -26,7 +26,7 @@ void setup() {
 void loop() {
 
 checkUserInteraction();
-analogWrite(pressReg,128);
+//analogWrite(pressReg,128);
 
 }
 
@@ -116,16 +116,16 @@ void AnalogIN(){
    
    // 5文字目は終了バルブ番号
       int vNumAE = Serial.parseInt();
-      for (int i = vNumAS; i<= vNumAE-1; i++){
-        val = analogRead(i-1);
+      for (int i = vNumAS; i< vNumAE; i++){
+        val = analogRead(i);
         Serial.print(val);
         Serial.print(", ");         
         }
-        val = analogRead(vNumAE-1);
+        val = analogRead(vNumAE);
         Serial.println(val);
    }
    else {
-        val = analogRead(vNumAS-1);    
+        val = analogRead(vNumAS);    
         Serial.println(val);
    }
       
