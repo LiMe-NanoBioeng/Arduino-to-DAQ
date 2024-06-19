@@ -8,7 +8,7 @@
 //by :K2(EEprotocol) 20240530 modify for pressure regulator pin 
 
 //difine ten valves 
-const int Valvepins[]={1,2,15,16,14,22,21,20,19,18};
+const int Valvepins[]={1,22,2,21,15,20,16,19,14,18};
 const int numValves = 10;
 int val = 0;
 //const int pressReg=4;
@@ -92,13 +92,14 @@ void DigitalOUT(){
   switch(onOFF){
     case 'H':
       // 読み込みデータが　H の場合
-      digitalWrite(Valvepins[vNumD-1], HIGH);
+      digitalWrite(Valvepins[vNumD], HIGH);
       break;
     case 'L':
       // 読み込みデータが　L の場合
-      digitalWrite(Valvepins[vNumD-1], LOW);
+      digitalWrite(Valvepins[vNumD], LOW);
       break;
   }
+  //Serial.println(Valvepins[vNumD]);
 }
 
 
