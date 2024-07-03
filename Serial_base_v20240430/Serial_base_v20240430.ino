@@ -38,7 +38,7 @@ void setup() {
       Serial.println("Error while sending soft reset command, retrying...");
     }
   } while (ret != 0);
-  delay(50); // wait long enough for chip reset to complete
+  //delay(50); // wait long enough for chip reset to complete
   // EOF I2C
 }
 
