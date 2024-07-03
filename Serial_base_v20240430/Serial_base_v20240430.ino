@@ -8,29 +8,48 @@
 //by :K2(EEprotocol) 20240530 modify for pressure regulator pin 
 
 //difine ten valves 
-const int Valvepins[]={1,22,2,21,15,20,16,19,14,18};
-const int numValves = 10;
+const int Valvepins[]={1,22,21,15,20,16,19,14,18};
+const int numValves = 9;
 int val = 0;
 //const int pressReg=4;
 
+//I2C 
+#include <Wire.h> // Arduino library for I2C
+const int ADDRESS = 0x40; // Standard address for Liquid Flow Sensors
+//EOF I2C
 //　setup for ten valves
 void setup() {
+  int ret;
   for(int i =0; i<numValves;i++){
    pinMode(Valvepins[i],OUTPUT);
 
    digitalWrite(Valvepins[i],HIGH);
    }
- Serial.begin(9600); //open serialport by 9600bps
+  Serial.begin(9600); //open serialport by 9600bps
+
+  //I2C
+  Wire.begin();
+  do {
+    // Soft reset the sensor
+    Wire.beginTransmission(ADDRESS);
+    Wire.write(0xFE);
+    ret = Wire.endTransmission();
+    if (ret != 0) {
+      Serial.println("Error while sending soft reset command, retrying...");
+    }
+  } while (ret != 0);
+  delay(50); // wait long enough for chip reset to complete
+  // EOF I2C
 }
 
 void loop() {
-
-checkUserInteraction();
+  checkUserInteraction();
 //analogWrite(pressReg,128);
 
 }
 
 void checkUserInteraction(){
+  int ret;
 
   while (Serial.available() > 0){ 
     // 受信したデータが存在する
@@ -64,6 +83,16 @@ void checkUserInteraction(){
           break;
         }
     }
+
+    else if (temp == 'I'){
+      switch(tempIO){
+        case 'I':
+          I2CIN();
+          break;
+        case 'O':
+          break;
+      }
+    }
     //
     else {
       Serial.flush();
@@ -72,6 +101,41 @@ void checkUserInteraction(){
   }
 }
 
+
+  void I2CIN(){
+
+  int ret;
+  uint16_t raw_sensor_value;
+  int16_t signed_sensor_value;
+
+  // To perform a measurement, first send 0xF1 to switch to measurement mode,
+  // then read 2 bytes + 1 CRC byte from the sensor.
+  Wire.beginTransmission(ADDRESS);
+  Wire.write(0xF1);
+  ret = Wire.endTransmission();
+  if (ret != 0) {
+    Serial.println("Error during write measurement mode command");
+
+  } else {
+    Wire.requestFrom(ADDRESS, 2);       // reading 2 bytes ignores the CRC byte
+    if (Wire.available() < 2) {
+      Serial.println("Error while reading flow measurement");
+
+    } else {
+      raw_sensor_value  = Wire.read() << 8; // read the MSB from the sensor
+      raw_sensor_value |= Wire.read();      // read the LSB from the sensor
+
+      //Serial.print("raw value from sensor: ");
+      //Serial.print(raw_sensor_value);
+
+      signed_sensor_value = (int16_t) raw_sensor_value;
+      //Serial.print(", signed value: ");
+      Serial.println(signed_sensor_value);
+    }
+  }
+
+  //delay(1000); // milliseconds delay between reads (for demo purposes)
+}
 void DigitalIN(){
   //Digitalinの処理
   //Serial.write('N');
