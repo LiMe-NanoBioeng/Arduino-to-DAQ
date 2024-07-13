@@ -242,7 +242,7 @@ void checkUserInteraction(){
 
       signed_sensor_value = (int16_t) raw_sensor_value;
       //Serial.print(", signed value: ");
-      Serial.println(signed_sensor_value / (float) scale_factor);
+      Serial.println((float) signed_sensor_value / (float) scale_factor);
     }
   }
 
