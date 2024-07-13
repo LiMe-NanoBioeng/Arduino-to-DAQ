@@ -16,20 +16,131 @@ int val = 0;
 //I2C 
 #include <Wire.h> // Arduino library for I2C
 const int ADDRESS = 0x40; // Standard address for Liquid Flow Sensors
+
+// EEPROM Addresses for factor and unit of calibration fields 0,1,2,3,4.
+const uint16_t SCALE_FACTOR_ADDRESSES[] = {0x2B6, 0x5B6, 0x8B6, 0xBB6, 0xEB6};
+const uint16_t UNIT_ADDRESSES[] =         {0x2B7, 0x5B7, 0x8B7, 0xBB7, 0xEB6};
+
+// Flow Units and their respective codes.
+const char    *FLOW_UNIT[] = {"nl/min", "ul/min", "ml/min", "ul/sec", "ml/h"};
+const uint16_t FLOW_UNIT_CODES[] = {2115, 2116, 2117, 2100, 2133};
+
+uint16_t scale_factor;
+const char *unit;
 //EOF I2C
 //　setup for ten valves
 void setup() {
   int ret;
+  uint16_t user_reg;
+  uint16_t scale_factor_address;
+  
+  uint16_t unit_code;
+
+  byte crc1;
+  byte crc2;
+  
   for(int i =0; i<numValves;i++){
    pinMode(Valvepins[i],OUTPUT);
 
    digitalWrite(Valvepins[i],HIGH);
    }
-  Serial.begin(9600); //open serialport by 9600bps
+ Serial.begin(9600); //open serialport by 9600bps
+ Wire.begin();       // join i2c bus (address optional for master)
+
+  do {
+    delay(1000); // Error handling for example: wait a second, then try again
+
+    // Soft reset the sensor
+    Wire.beginTransmission(ADDRESS);
+    Wire.write(0xFE);
+    ret = Wire.endTransmission();
+    if (ret != 0) {
+      Serial.println("Error while sending soft reset command, retrying...");
+      continue;
+    }
+    delay(50); // wait long enough for reset
+
+    // Read the user register to get the active configuration field
+    Wire.beginTransmission(ADDRESS);
+    Wire.write(0xE3);
+    ret = Wire.endTransmission();
+    if (ret != 0) {
+      Serial.println("Error while setting register read mode");
+      continue;
+    }
+
+    Wire.requestFrom(ADDRESS, 2);
+    if (Wire.available() < 2) {
+      Serial.println("Error while reading register settings");
+      continue;
+    }
+    user_reg  = Wire.read() << 8;
+    user_reg |= Wire.read();
+
+    // The active configuration field is determined by bit <6:4>
+    // of the User Register
+    scale_factor_address = SCALE_FACTOR_ADDRESSES[(user_reg & 0x0070) >> 4];
+
+    // Read scale factor and measurement unit
+    Wire.beginTransmission(ADDRESS);
+    Wire.write(0xFA); // Set EEPROM read mode
+    // Write left aligned 12 bit EEPROM address
+    Wire.write(scale_factor_address >> 4);
+    Wire.write((scale_factor_address << 12) >> 8);
+    ret = Wire.endTransmission();
+    if (ret != 0) {
+      Serial.println("Error during write EEPROM address");
+      continue;
+    }
+
+    // Read the scale factor and the adjacent unit
+    Wire.requestFrom(ADDRESS, 6);
+    if (Wire.available() < 6) {
+      Serial.println("Error while reading EEPROM");
+      continue;
+    }
+    scale_factor = Wire.read() << 8;
+    scale_factor |= Wire.read();
+    crc1         = Wire.read();
+    unit_code    = Wire.read() << 8;
+    unit_code   |= Wire.read();
+    crc2         = Wire.read();
+
+    switch (unit_code) {
+      case 2115:
+        {
+          unit = FLOW_UNIT[0];
+        }
+        break;
+      case 2116:
+        {
+          unit = FLOW_UNIT[1];
+        }
+        break;
+      case 2117:
+        {
+          unit = FLOW_UNIT[2];
+        }
+        break;
+      case 2100:
+        {
+          unit = FLOW_UNIT[3];
+        }
+        break;
+      case 2133:
+        {
+          unit = FLOW_UNIT[4];
+        }
+        break;
+      default:
+        Serial.println("Error: No matching unit code");
+        break;
+    }
+
 
   //I2C
-  Wire.begin();
-  do {
+  //Wire.begin();
+  //do {
     // Soft reset the sensor
     Wire.beginTransmission(ADDRESS);
     Wire.write(0xFE);
@@ -38,6 +149,7 @@ void setup() {
       Serial.println("Error while sending soft reset command, retrying...");
     }
   } while (ret != 0);
+  
   //delay(50); // wait long enough for chip reset to complete
   // EOF I2C
 }
@@ -130,7 +242,7 @@ void checkUserInteraction(){
 
       signed_sensor_value = (int16_t) raw_sensor_value;
       //Serial.print(", signed value: ");
-      Serial.println(signed_sensor_value);
+      Serial.println(signed_sensor_value / (float) scale_factor);
     }
   }
 
