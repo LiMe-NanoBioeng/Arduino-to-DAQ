@@ -155,9 +155,9 @@ void setup() {
 }
 
 void loop() {
-  checkUserInteraction();
+ checkUserInteraction();
 //analogWrite(pressReg,128);
-
+//I2CIN();
 }
 
 void checkUserInteraction(){
@@ -216,9 +216,10 @@ void checkUserInteraction(){
 
   void I2CIN(){
 
-  int ret;
-  uint16_t raw_sensor_value;
-  int16_t signed_sensor_value;
+    int ret;
+    uint16_t raw_sensor_value;
+    int16_t signed_sensor_value;
+    float converted_flowrate;
 
   // To perform a measurement, first send 0xF1 to switch to measurement mode,
   // then read 2 bytes + 1 CRC byte from the sensor.
@@ -241,8 +242,11 @@ void checkUserInteraction(){
       //Serial.print(raw_sensor_value);
 
       signed_sensor_value = (int16_t) raw_sensor_value;
+      converted_flowrate = (float) signed_sensor_value / (float) scale_factor;
       //Serial.print(", signed value: ");
-      Serial.println((float) signed_sensor_value / (float) scale_factor);
+      
+      Serial.println(converted_flowrate);
+      //Serial.println(signed_sensor_value);
     }
   }
 
