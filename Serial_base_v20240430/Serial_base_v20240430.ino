@@ -175,7 +175,7 @@ int PID(){
   float MV,curT;
   int aoDuty;
   //Serial.println(integralv);
-  max_val=254;
+  max_val=10;
   curT=millis();
   dt = (curT-preT)/1000; 
   measurement=I2CIN();
@@ -185,9 +185,9 @@ int PID(){
   integralv = integralv+Ki*error*dt;
   D =Kd*(error-e_prev)/dt;
   MV=P+integralv+D;
-  aoDuty = max(min(MV / 1000 * 255.0,max_val),0);
+  aoDuty = max(min(MV / 1000 * 255.0,254),0);
   analogWrite(vNumA, aoDuty);
-//  Serial.print(P);
+//  Serial.println(P);
 //  Serial.print(", ");
 //  Serial.print(MV);
 //  Serial.print(", ");
@@ -196,7 +196,7 @@ int PID(){
 //  Serial.print(setpoint);
 //  Serial.print(", ");
 //  Serial.println(measurement);
-  integralv = MV;
+  integralv = max(min(MV,254000),0);
   preT=curT;
   pre_measurement = measurement;
   return(aoDuty);
