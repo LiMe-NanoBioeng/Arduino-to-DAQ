@@ -7,6 +7,16 @@
 //by Junichi Murai　20240513  modify for ten valves
 //by :K2(EEprotocol) 20240530 modify for pressure regulator pin 
 
+// feadback control
+bool fdmode = false;
+float pre_measurement=0.0;
+float setpoint = 0.0;
+float preT=0.0;
+float integralv=0.0;
+float Kp=0.1;
+float Ki=0.001;
+float Kd=0.0;
+int vNumA =11;
 //difine ten valves 
 const int Valvepins[]={1,22,21,15,20,16,19,14,18};
 const int numValves = 9;
@@ -41,12 +51,10 @@ void setup() {
   
   for(int i =0; i<numValves;i++){
    pinMode(Valvepins[i],OUTPUT);
-
    digitalWrite(Valvepins[i],HIGH);
    }
  Serial.begin(9600); //open serialport by 9600bps
  Wire.begin();       // join i2c bus (address optional for master)
-
   do {
     delay(1000); // Error handling for example: wait a second, then try again
 
@@ -156,20 +164,48 @@ void setup() {
 
 void loop() {
  checkUserInteraction();
-//analogWrite(pressReg,128);
-//I2CIN();
+ if (fdmode==true){
+  PID();
+ }
+ 
 }
-
+void PID(){
+  float measurement;
+  float error, e_prev, P, D, integral, max_val,dt;
+  float MV,curT;
+  int aoDuty;
+  //Serial.println(integralv);
+  max_val=500.0;
+  curT=millis();
+  dt = (curT-preT)/1000; 
+  measurement=I2CIN();
+  error=setpoint - measurement;
+  e_prev=setpoint -pre_measurement;
+  P=Kp*error;
+  integralv = integralv+Ki*error*dt;
+  D =Kd*(error-e_prev)/dt;
+  MV=P+integralv+D;
+  aoDuty = max(min(MV / 1000 * 255.0,255),0);
+  analogWrite(vNumA, aoDuty);
+//  Serial.print(P);
+//  Serial.print(", ");
+//  Serial.print(MV);
+//  Serial.print(", ");
+//  Serial.print(aoDuty);
+//  Serial.print(", ");
+//  Serial.print(setpoint);
+//  Serial.print(", ");
+//  Serial.println(measurement);
+  integralv = MV;
+  preT=curT;
+  pre_measurement = measurement;
+  }
 void checkUserInteraction(){
-  int ret;
-
-  while (Serial.available() > 0){ 
-    // 受信したデータが存在する
-    char temp = Serial.read();
-
-    // 1文字目を読み込む
-    char tempIO = Serial.read();
-
+  //int ret;
+  float converted_flowrate;
+  while (Serial.available() > 0){ // if data is available 
+    char temp = Serial.read(); // read the first char
+    char tempIO = Serial.read(); // read the second char
     if ( temp == 'D'){
       switch(tempIO){
         case 'I':
@@ -199,11 +235,25 @@ void checkUserInteraction(){
     else if (temp == 'I'){
       switch(tempIO){
         case 'I':
-          I2CIN();
+          converted_flowrate=I2CIN();
+          Serial.println(converted_flowrate);
           break;
         case 'O':
           break;
       }
+    }
+    else if (temp== 'F'){
+      fdmode=true;
+      vNumA=Serial.parseInt();
+      setpoint=Serial.parseFloat();
+      Kp=Serial.parseFloat();
+      Ki=Serial.parseFloat();
+      Kd=Serial.parseFloat();
+      break;
+    }
+    else if (temp=='B'){
+      fdmode=false;
+      break;
     }
     //
     else {
@@ -214,7 +264,7 @@ void checkUserInteraction(){
 }
 
 
-  void I2CIN(){
+  float I2CIN(){
 
     int ret;
     uint16_t raw_sensor_value;
@@ -245,8 +295,7 @@ void checkUserInteraction(){
       converted_flowrate = (float) signed_sensor_value / (float) scale_factor;
       //Serial.print(", signed value: ");
       
-      Serial.println(converted_flowrate);
-      //Serial.println(signed_sensor_value);
+      return converted_flowrate;
     }
   }
 
