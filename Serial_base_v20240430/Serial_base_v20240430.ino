@@ -163,13 +163,13 @@ void setup() {
 }
 
 void loop() {
- checkUserInteraction();
+  int aoDuty;
  if (fdmode==true){
-  PID();
+  aoDuty=PID();
  }
- 
+ checkUserInteraction(aoDuty); 
 }
-void PID(){
+int PID(){
   float measurement;
   float error, e_prev, P, D, integral, max_val,dt;
   float MV,curT;
@@ -199,8 +199,9 @@ void PID(){
   integralv = MV;
   preT=curT;
   pre_measurement = measurement;
+  return(aoDuty);
   }
-void checkUserInteraction(){
+void checkUserInteraction(int aoDuty){
   //int ret;
   float converted_flowrate;
   while (Serial.available() > 0){ // if data is available 
@@ -254,6 +255,9 @@ void checkUserInteraction(){
     else if (temp=='B'){
       fdmode=false;
       break;
+    }
+    else if (temp=='R'){
+      Serial.println(aoDuty);
     }
     //
     else {
