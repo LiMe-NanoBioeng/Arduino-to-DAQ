@@ -252,11 +252,11 @@ void checkUserInteraction(int aoDuty){
       Kd=Serial.parseFloat();
       break;
     }
-    else if (temp=='B'){
+    else if (temp=='B'){ // 
       fdmode=false;
       break;
     }
-    else if (temp=='R'){
+    else if (temp=='R'){ // read duty
       Serial.println(aoDuty);
     }
     //
@@ -397,7 +397,7 @@ void AnalogOUT(){
       
     case 'v':
       // 読み込みデータが　v(mV) の場合
-      aoDuty = aoDuty / 5000 * 255;
+      //aoDuty = aoDuty;
       analogWrite(vNumA, aoDuty);
       break;
 
