@@ -187,16 +187,7 @@ int PID(){
   MV=P+integralv+D;
   aoDuty = max(min(MV / 1000 * 255.0,254),0);
   analogWrite(vNumA, aoDuty);
-//  Serial.println(P);
-//  Serial.print(", ");
-//  Serial.print(MV);
-//  Serial.print(", ");
-//  Serial.print(aoDuty);
-//  Serial.print(", ");
-//  Serial.print(setpoint);
-//  Serial.print(", ");
-//  Serial.println(measurement);
-  integralv = max(min(MV,254000),0);
+  integralv = max(min(MV,1000),0);
   preT=curT;
   pre_measurement = measurement;
   return(aoDuty);
