@@ -350,6 +350,9 @@ void AnalogIN(){
         Serial.println(val);
    }
    else if (from_to == ','){
+        val = analogRead(vNumAS);    
+        Serial.print(val);
+        Serial.print(", ");         
         int vNumAE = Serial.parseInt();
         val = analogRead(vNumAE);
         Serial.println(val);
