@@ -335,9 +335,9 @@ void AnalogIN(){
   int vNumAS = Serial.parseInt();
   
   // 4文字目はコロンの判定
-  // str from_to = Serial.read();
+  char from_to = Serial.read();
     
-  if ( Serial.read() == ':'){
+  if ( from_to == ':'){
    
    // 5文字目は終了バルブ番号
       int vNumAE = Serial.parseInt();
@@ -349,6 +349,11 @@ void AnalogIN(){
         val = analogRead(vNumAE);
         Serial.println(val);
    }
+   else if (from_to == ','){
+        int vNumAE = Serial.parseInt();
+        val = analogRead(vNumAE);
+        Serial.println(val);
+    }
    else {
         val = analogRead(vNumAS);    
         Serial.println(val);
