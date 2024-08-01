@@ -9,6 +9,7 @@
 
 // feadback control
 bool fdmode = false;
+bool fmeter = true;
 float pre_measurement=0.0;
 float setpoint = 0.0;
 float preT=0.0;
@@ -37,6 +38,7 @@ const uint16_t FLOW_UNIT_CODES[] = {2115, 2116, 2117, 2100, 2133};
 
 uint16_t scale_factor;
 const char *unit;
+int starttime;
 //EOF I2C
 //　setup for ten valves
 void setup() {
@@ -55,15 +57,20 @@ void setup() {
    }
  Serial.begin(9600); //open serialport by 9600bps
  Wire.begin();       // join i2c bus (address optional for master)
+ starttime=millis();
   do {
     delay(1000); // Error handling for example: wait a second, then try again
-
+    if (millis()-starttime > 10000){
+      fmeter=false;
+      break;
+      }
+    //Serial.println(millis()-starttime);
     // Soft reset the sensor
     Wire.beginTransmission(ADDRESS);
     Wire.write(0xFE);
     ret = Wire.endTransmission();
     if (ret != 0) {
-      Serial.println("Error while sending soft reset command, retrying...");
+      //Serial.println("Error while sending soft reset command, retrying...");
       continue;
     }
     delay(50); // wait long enough for reset
@@ -73,13 +80,13 @@ void setup() {
     Wire.write(0xE3);
     ret = Wire.endTransmission();
     if (ret != 0) {
-      Serial.println("Error while setting register read mode");
+      //Serial.println("Error while setting register read mode");
       continue;
     }
 
     Wire.requestFrom(ADDRESS, 2);
     if (Wire.available() < 2) {
-      Serial.println("Error while reading register settings");
+      //Serial.println("Error while reading register settings");
       continue;
     }
     user_reg  = Wire.read() << 8;
@@ -97,14 +104,14 @@ void setup() {
     Wire.write((scale_factor_address << 12) >> 8);
     ret = Wire.endTransmission();
     if (ret != 0) {
-      Serial.println("Error during write EEPROM address");
+      //Serial.println("Error during write EEPROM address");
       continue;
     }
 
     // Read the scale factor and the adjacent unit
     Wire.requestFrom(ADDRESS, 6);
     if (Wire.available() < 6) {
-      Serial.println("Error while reading EEPROM");
+      //Serial.println("Error while reading EEPROM");
       continue;
     }
     scale_factor = Wire.read() << 8;
@@ -155,6 +162,7 @@ void setup() {
     ret = Wire.endTransmission();
     if (ret != 0) {
       Serial.println("Error while sending soft reset command, retrying...");
+      //fmeter=false;
     }
   } while (ret != 0);
   
@@ -227,7 +235,11 @@ void checkUserInteraction(int aoDuty){
     else if (temp == 'I'){
       switch(tempIO){
         case 'I':
-          converted_flowrate=I2CIN();
+          if (fmeter ==true){
+            converted_flowrate=I2CIN();
+          }else{
+            converted_flowrate=0.0;
+          }
           Serial.println(converted_flowrate);
           break;
         case 'O':
@@ -272,12 +284,12 @@ void checkUserInteraction(int aoDuty){
   Wire.write(0xF1);
   ret = Wire.endTransmission();
   if (ret != 0) {
-    Serial.println("Error during write measurement mode command");
+    //Serial.println("Error during write measurement mode command");
 
   } else {
     Wire.requestFrom(ADDRESS, 2);       // reading 2 bytes ignores the CRC byte
     if (Wire.available() < 2) {
-      Serial.println("Error while reading flow measurement");
+      //Serial.println("Error while reading flow measurement");
 
     } else {
       raw_sensor_value  = Wire.read() << 8; // read the MSB from the sensor
