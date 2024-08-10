@@ -259,6 +259,15 @@ void checkUserInteraction(int aoDuty){
       fdmode=false;
       break;
     }
+    else if (temp=='P'){
+      DigitalPulse();
+//      vNumA=Serial.parseInt();
+//      setpoint=Serial.parseFloat();
+//      Kp=Serial.parseFloat();
+//      Ki=Serial.parseFloat();
+//      Kd=Serial.parseFloat();
+      break;
+    }
     else if (temp=='R'){ // read duty
       Serial.println(aoDuty);
     }
@@ -338,7 +347,56 @@ void DigitalOUT(){
   Serial.println('R');
 }
 
-
+void DigitalPulse(){
+  float curT;
+  // 3文字目は開始バルブ番号
+  int vNumD = Serial.parseInt();
+  
+  // 4文字目はコロンの判定
+  char from_to = Serial.read();
+  int vNumAE = Serial.parseInt();
+  float delayTime = Serial.parseFloat();
+  float duration = Serial.parseFloat();
+//  Serial.print(vNumD);
+//  Serial.print(from_to);
+//  Serial.print(vNumAE);
+//  Serial.print(',');
+//  Serial.print(delayTime);
+//  Serial.print(',');
+//  Serial.println(duration);
+    
+  curT=millis()/1000;
+  while (delayTime > millis()/1000-curT){
+    
+  }
+  while (delayTime+duration > millis()/1000-curT){
+    if ( from_to == ':'){
+        for (int i = vNumD; i<= vNumAE; i++){
+          digitalWrite(Valvepins[i], HIGH);      
+          }
+     }
+     else if (from_to == ','){
+          digitalWrite(Valvepins[vNumD], HIGH);
+          digitalWrite(Valvepins[vNumAE],HIGH);
+      }
+     else {
+          digitalWrite(Valvepins[vNumD], HIGH);
+     }
+  }
+    if ( from_to == ':'){
+        for (int i = vNumD; i<= vNumAE; i++){
+          digitalWrite(Valvepins[i], LOW);      
+          }
+     }
+     else if (from_to == ','){
+          digitalWrite(Valvepins[vNumD], LOW);
+          digitalWrite(Valvepins[vNumAE],LOW);
+      }
+     else {
+          digitalWrite(Valvepins[vNumD], LOW);
+     }
+    
+}
 // "AI1:3"というフォーマットの文字列をベースとして設定する
 //AnalogINの処理
 void AnalogIN(){
