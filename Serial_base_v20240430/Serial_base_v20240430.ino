@@ -17,10 +17,16 @@ float integralv=0.0;
 float Kp=0.1;
 float Ki=0.001;
 float Kd=0.0;
-int vNumA =11;
+int aoDuty=0.0;
+//int vNumA =11;
+int vNumA =9;//9/9/2024 K2
 //difine ten valves 
-const int Valvepins[]={1,22,21,15,20,16,19,14,18};
-const int numValves = 9;
+//const int Valvepins[]={1,22,21,15,20,16,19,14,18};
+//const int Valvepins[]={1,7,15,16,14,22,21,20,19,18,23};
+//３つ目と５つ目を交代
+const int Valvepins[]={1,7,14,16,15,22,21,20,19,18,23};
+//const int Valvepins[]={1,17,14,16,15,22,21,20,19,18,};
+const int numValves = 11;
 int val = 0;
 //const int pressReg=4;
 
@@ -55,7 +61,7 @@ void setup() {
    pinMode(Valvepins[i],OUTPUT);
    digitalWrite(Valvepins[i],HIGH);
    }
- Serial.begin(9600); //open serialport by 9600bps
+ Serial.begin(9600); //open serialport by 9600bps#NEVER CHANGE FROM 9600. Be patient however slow it is... 
  Wire.begin();       // join i2c bus (address optional for master)
  starttime=millis();
   do {
@@ -164,36 +170,56 @@ void setup() {
       Serial.println("Error while sending soft reset command, retrying...");
       //fmeter=false;
     }
+     delay(50); // wait long enough for chip reset to complete
+   // To perform a measurement, first send 0xF1 to switch to measurement mode,
+  // then read 2 bytes + 1 CRC byte from the sensor.
+  Wire.beginTransmission(ADDRESS);
+  Wire.write(0xF1);
+  ret = Wire.endTransmission();
+  if (ret != 0) {
+      Serial.println("Error while changing to measurement mode, retrying...");
+      //fmeter=false;
+    }
   } while (ret != 0);
   
-  //delay(50); // wait long enough for chip reset to complete
+ 
   // EOF I2C
 }
-
+bool is_first_cycle = true; //add JM
 void loop() {
-  int aoDuty;
+ checkUserInteraction(aoDuty); 
  if (fdmode==true){
   aoDuty=PID();
  }
- checkUserInteraction(aoDuty); 
 }
+//bool is_first_cycle = true; //add JM
+
 int PID(){
   float measurement;
-  float error, e_prev, P, D, integral, max_val,dt;
+  float error, e_prev, P, D, max_val,dt;
   float MV,curT;
-  int aoDuty;
   //Serial.println(integralv);
   max_val=10;
   curT=millis();
   dt = (curT-preT)/1000; 
-  measurement=I2CIN();
+  
+  //add JM
+  if (is_first_cycle){
+    measurement=0.0;
+    is_first_cycle=false;
+  }else{
+    measurement=I2CIN();
+  }
+  
+  //measurement=I2CIN();
   error=setpoint - measurement;
   e_prev=setpoint -pre_measurement;
   P=Kp*error;
   integralv = integralv+Ki*error*dt;
   D =Kd*(error-e_prev)/dt;
   MV=P+integralv+D;
-  aoDuty = max(min(MV / 1000 * 255.0,254),0);
+  //aoDuty = max(min(MV / 1000 * 255.0,254),0);
+  aoDuty = max(min(MV / 1000 * 255.0,254),1);
   analogWrite(vNumA, aoDuty);
   integralv = max(min(MV,1000),0);
   preT=curT;
@@ -253,10 +279,21 @@ void checkUserInteraction(int aoDuty){
       Kp=Serial.parseFloat();
       Ki=Serial.parseFloat();
       Kd=Serial.parseFloat();
+      preT=millis();
+      pre_measurement=0.0;
+      integralv=0.0;
+      is_first_cycle = true; //add JM
       break;
     }
     else if (temp=='B'){ // 
       fdmode=false;
+      pre_measurement=0.0;
+      integralv=0.0;
+      is_first_cycle = true; //add JM
+      //aoDuty=1;//8/9/2024 :K2add
+      //digitalWrite(Valvepins[8],HIGH);
+      //delay(10);
+      //digitalWrite(Valvepins[8],LOW);
       break;
     }
     else if (temp=='P'){
@@ -278,8 +315,6 @@ void checkUserInteraction(int aoDuty){
     }
   }
 }
-
-
   float I2CIN(){
 
     int ret;
@@ -289,13 +324,13 @@ void checkUserInteraction(int aoDuty){
 
   // To perform a measurement, first send 0xF1 to switch to measurement mode,
   // then read 2 bytes + 1 CRC byte from the sensor.
-  Wire.beginTransmission(ADDRESS);
-  Wire.write(0xF1);
-  ret = Wire.endTransmission();
-  if (ret != 0) {
+  //Wire.beginTransmission(ADDRESS);
+  //Wire.write(0xF1);
+  //ret = Wire.endTransmission();
+  //if (ret != 0) {
     //Serial.println("Error during write measurement mode command");
 
-  } else {
+  //} else {
     Wire.requestFrom(ADDRESS, 2);       // reading 2 bytes ignores the CRC byte
     if (Wire.available() < 2) {
       //Serial.println("Error while reading flow measurement");
@@ -312,7 +347,7 @@ void checkUserInteraction(int aoDuty){
       //Serial.print(", signed value: ");
       
       return converted_flowrate;
-    }
+    //}
   }
 
   //delay(1000); // milliseconds delay between reads (for demo purposes)
@@ -365,11 +400,14 @@ void DigitalPulse(){
 //  Serial.print(',');
 //  Serial.println(duration);
     
-  curT=millis()/1000;
-  while (delayTime > millis()/1000-curT){
+  curT=(float) millis()/1000;
+//     Serial.print(delayTime+duration);
+//     Serial.print( ',');
+//     Serial.println((float) millis());
+  while (delayTime > (float) millis()/1000-curT){
     
   }
-  while (delayTime+duration > millis()/1000-curT){
+  while (delayTime+duration > (float) millis()/1000-curT){
     if ( from_to == ':'){
         for (int i = vNumD; i<= vNumAE; i++){
           digitalWrite(Valvepins[i], HIGH);      
