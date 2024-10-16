@@ -408,6 +408,7 @@ void DigitalPulse(){
     
   }
   while (delayTime+duration > (float) millis()/1000-curT){
+    digitalWrite(Valvepins[10], HIGH);
     if ( from_to == ':'){
         for (int i = vNumD; i<= vNumAE; i++){
           digitalWrite(Valvepins[i], HIGH);      
@@ -433,6 +434,7 @@ void DigitalPulse(){
      else {
           digitalWrite(Valvepins[vNumD], LOW);
      }
+     digitalWrite(Valvepins[10], LOW);
     
 }
 // "AI1:3"というフォーマットの文字列をベースとして設定する
