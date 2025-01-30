@@ -308,6 +308,9 @@ void checkUserInteraction(int aoDuty){
     else if (temp=='R'){ // read duty
       Serial.println(aoDuty);
     }
+    else if (temp=='S'){
+      Serial.print('R');
+    }
     //
     else {
       Serial.flush();
@@ -395,6 +398,7 @@ void DigitalPulse(){
   int vNumRead =Serial.parseInt(); // channel number of the photosensor
   int threshold =Serial.parseInt(); // threshold to stop
   curT=(float) millis()/1000;
+  Serial.println('B');
 //     Serial.print(delayTime+duration);
 //     Serial.print( ',');
 //     Serial.println((float) millis());
@@ -436,6 +440,7 @@ void DigitalPulse(){
         digitalWrite(Valvepins[vNumD], LOW);
     }
   digitalWrite(Valvepins[10], LOW);
+  Serial.println('R');
     
 }
 // "AI1:3"というフォーマットの文字列をベースとして設定する
