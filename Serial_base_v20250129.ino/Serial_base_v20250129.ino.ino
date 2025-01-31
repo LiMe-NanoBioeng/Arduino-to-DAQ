@@ -229,7 +229,10 @@ int PID(){
 void checkUserInteraction(int aoDuty){
   //int ret;
   float converted_flowrate;
+  String out;
   while (Serial.available() > 0){ // if data is available 
+    //String line=Serial.readStringUntil('\n');
+    //Serial.println(line);
     char temp = Serial.read(); // read the first char
     char tempIO = Serial.read(); // read the second char
     if ( temp == 'D'){
@@ -249,7 +252,9 @@ void checkUserInteraction(int aoDuty){
       switch(tempIO){
         case 'I':
         // 読み込みデータが　I の場合
-          AnalogIN();
+          out = AnalogIN();
+          Serial.println(out);
+
           break;
         case 'O':
         // 読み込みデータが　O の場合
@@ -308,12 +313,12 @@ void checkUserInteraction(int aoDuty){
     else if (temp=='R'){ // read duty
       Serial.println(aoDuty);
     }
-    else if (temp=='S'){
+    else if (temp=='S'){  // return ready 
       Serial.print('R');
     }
     //
     else {
-      Serial.flush();
+      //Serial.flush();
       break;
     }
   }
@@ -445,39 +450,49 @@ void DigitalPulse(){
 }
 // "AI1:3"というフォーマットの文字列をベースとして設定する
 //AnalogINの処理
-void AnalogIN(){
-
+String AnalogIN(){
+  String out;
+  int val;
   // 3文字目は開始バルブ番号
   int vNumAS = Serial.parseInt();
   
   // 4文字目はコロンの判定
-  char from_to = Serial.read();
-    
+  char from_to = Serial.read();   
   if ( from_to == ':'){
+    int vNumAE = Serial.parseInt();
    
    // 5文字目は終了バルブ番号
-      int vNumAE = Serial.parseInt();
-      for (int i = vNumAS; i< vNumAE; i++){
-        val = analogRead(i);
-        Serial.print(val);
-        Serial.print(", ");         
+      for (int i = vNumAS; i<= vNumAE; i++){
+        //Serial.print(val);
+        //Serial.print(", ");
+        if (i>vNumAS){
+          val = analogRead(i);
+          out= out + "," + val;
+        } 
+        else{
+          val = analogRead(i);
+          out = val;
+          //out=val;
         }
-        val = analogRead(vNumAE);
-        Serial.println(val);
+        }
+        //val = analogRead(vNumAE);
    }
    else if (from_to == ','){
-        val = analogRead(vNumAS);    
-        Serial.print(val);
-        Serial.print(", ");         
         int vNumAE = Serial.parseInt();
-        val = analogRead(vNumAE);
-        Serial.println(val);
+        val = analogRead(vNumAS);
+        out = val;    
+        //Serial.print(val);
+        //Serial.print(", ");
+        //out = val;
+        val=analogRead(vNumAE);
+        out = out + "," + val ;
     }
    else {
-        val = analogRead(vNumAS);    
-        Serial.println(val);
+        val =analogRead(vNumAS);
+        out = val;    
    }
-      
+ //Serial.println(out);
+   return out;   
 }
 
 
