@@ -17,15 +17,13 @@ float integralv=0.0;
 float Kp=0.1;
 float Ki=0.001;
 float Kd=0.0;
+
 int aoDuty=0.0;
 //int vNumA =11;
 int vNumA =9;//9/9/2024 K2
 //difine ten valves 
 //const int Valvepins[]={1,22,21,15,20,16,19,14,18};
-//const int Valvepins[]={1,7,15,16,14,22,21,20,19,18,23};
-//３つ目と５つ目を交代
-const int Valvepins[]={1,7,14,16,15,22,21,20,19,18,23};
-//const int Valvepins[]={1,17,14,16,15,22,21,20,19,18,};
+const int Valvepins[]={1,7,15,16,14,22,21,20,19,18,23};
 const int numValves = 11;
 int val = 0;
 //const int pressReg=4;
@@ -302,6 +300,7 @@ void checkUserInteraction(int aoDuty){
       break;
     }
     else if (temp=='P'){
+
       DigitalPulse();
 //      vNumA=Serial.parseInt();
 //      setpoint=Serial.parseFloat();
