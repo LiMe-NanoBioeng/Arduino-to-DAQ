@@ -157,27 +157,27 @@ void setup() {
     }
 
 
-  //I2C
-  //Wire.begin();
-  //do {
-    // Soft reset the sensor
-    Wire.beginTransmission(ADDRESS);
-    Wire.write(0xFE);
-    ret = Wire.endTransmission();
-    if (ret != 0) {
-      Serial.println("Error while sending soft reset command, retrying...");
-      //fmeter=false;
-    }
-     delay(50); // wait long enough for chip reset to complete
-   // To perform a measurement, first send 0xF1 to switch to measurement mode,
-  // then read 2 bytes + 1 CRC byte from the sensor.
-  Wire.beginTransmission(ADDRESS);
-  Wire.write(0xF1);
-  ret = Wire.endTransmission();
-  if (ret != 0) {
-      Serial.println("Error while changing to measurement mode, retrying...");
-      //fmeter=false;
-    }
+  // //I2C
+  // //Wire.begin();
+  // //do {
+  //   // Soft reset the sensor
+  //   Wire.beginTransmission(ADDRESS);
+  //   Wire.write(0xFE);
+  //   ret = Wire.endTransmission();
+  //   if (ret != 0) {
+  //     Serial.println("Error while sending soft reset command, retrying...");
+  //     //fmeter=false;
+  //   }
+  //    delay(50); // wait long enough for chip reset to complete
+  //  // To perform a measurement, first send 0xF1 to switch to measurement mode,
+  // // then read 2 bytes + 1 CRC byte from the sensor.
+  // Wire.beginTransmission(ADDRESS);
+  // Wire.write(0xF1);
+  // ret = Wire.endTransmission();
+  // if (ret != 0) {
+  //     Serial.println("Error while changing to measurement mode, retrying...");
+  //     //fmeter=false;
+  //   }
   } while (ret != 0);
   
  
@@ -225,7 +225,7 @@ int PID(){
   return(aoDuty);
   }
 void checkUserInteraction(int aoDuty){
-  //int ret;
+  int ret;
   float converted_flowrate;
   String out;
   while (Serial.available() > 0){ // if data is available 
@@ -293,6 +293,27 @@ void checkUserInteraction(int aoDuty){
       pre_measurement=0.0;
       integralv=0.0;
       is_first_cycle = true; //add JM
+        //I2C
+    //Wire.begin();
+    //do {
+      // Soft reset the sensor
+      Wire.beginTransmission(ADDRESS);
+      Wire.write(0xFE);
+      ret = Wire.endTransmission();
+      if (ret != 0) {
+        Serial.println("Error while sending soft reset command, retrying...");
+        //fmeter=false;
+      }
+      delay(50); // wait long enough for chip reset to complete
+    // To perform a measurement, first send 0xF1 to switch to measurement mode,
+    // then read 2 bytes + 1 CRC byte from the sensor.
+    Wire.beginTransmission(ADDRESS);
+    Wire.write(0xF1);
+    ret = Wire.endTransmission();
+    if (ret != 0) {
+        Serial.println("Error while changing to measurement mode, retrying...");
+        //fmeter=false;
+      }
       //aoDuty=1;//8/9/2024 :K2add
       //digitalWrite(Valvepins[8],HIGH);
       //delay(10);
