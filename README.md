@@ -4,7 +4,10 @@ Arduino program for a serial port DAQ.  <br/>
 ## Command list<br/>
 -DI: Read the digital channel (not designed yet)<br/>
 -DO: Write the digital channel<br/>
- DO1H or DO1L<br/>
+```
+ DO1H　　
+ DO1L
+```
  returns R if the commands successfully processed.<br/>
 -DP: Rapidly modulate the digital channel High and then Low as<br/>
 DP1,10,10,2,10<br/>
