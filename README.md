@@ -32,5 +32,16 @@ analogue channel 2, number 0-255 corresponding to 0-5V, unit<br/>
 ```
 II
 ```
+an example python code is
+
+```
+    def ArduinoI2C():
+        ser.write(b'II\n')
+        time.sleep(0.01)
+        ser_bytes = ser.readline()
+        ser_bytes=ser_bytes.decode('utf-8').rstrip()
+        return(float(ser_bytes))
+
+```
 -F: Start the feedback control<br/>
 -B: Stop the feedback control<br/>
