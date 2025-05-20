@@ -91,9 +91,12 @@ An example Python code call this function
         return(float(ser_bytes))
 
 ```
--F: Start the feedback control<br/>
+-FB: Start the feedback control<br/>
+```
+FB1,19,1,2,3
+```
+FB analogue channel number, setpoint, proportional, integral, differential control parameters<br/>
 an example python code to call this function is
-
 ```
     def ArduinoFB(value,vNumA,setpoint,Kp,Ki,Kd):
         if value==True:
@@ -102,7 +105,6 @@ an example python code to call this function is
             time.sleep(0.1)
         else:
             ser.write(b'B')
-            time.sleep(0.1)
-            
+            time.sleep(0.1)         
 ```
 -B: Stop the feedback control<br/>
