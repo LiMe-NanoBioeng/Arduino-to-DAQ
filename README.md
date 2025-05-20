@@ -11,7 +11,6 @@ Arduino program for a serial port DAQ.  <br/>
  returns R if the commands successfully processed.<br/>
 
 ```
-     # Control Valve    
     def ArduinoDO(channel,flag):
         if flag:
             Dout = 'DO' + str(channel) + 'H\n'   
@@ -20,7 +19,6 @@ Arduino program for a serial port DAQ.  <br/>
         ser.write(Dout.encode('utf-8'))
         ser_bytes = ser.readline().decode('utf-8')
         return(ser_bytes.strip())
-
 ```
         
 - PP: Rapidly modulate the digital channel High and then Low as<br/>
