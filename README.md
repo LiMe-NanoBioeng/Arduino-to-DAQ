@@ -2,8 +2,8 @@
 
 Arduino program for a serial port DAQ.  <br/>
 ## Command list<br/>
--DI: Read the digital channel (not designed yet)<br/>
--DO: Write the digital channel<br/>
+- DI: Read the digital channel (not designed yet)<br/>
+- DO: Write the digital channel<br/>
 ```
  DO1H　　
  DO1L
@@ -23,7 +23,7 @@ Arduino program for a serial port DAQ.  <br/>
 
 ```
         
--DP: Rapidly modulate the digital channel High and then Low as<br/>
+- DP: Rapidly modulate the digital channel High and then Low as<br/>
 ```
 DP1,10,10,2,10
 ```
@@ -38,7 +38,7 @@ DP(channel num),delay time (ms), duration (ms),channel number of sensor, thresho
         #time.sleep(delay+width)
 ```
 
--AI: Read the analogue channel<br/>
+- AI: Read the analogue channel<br/>
 ```
 AI1:3
 ```
@@ -59,7 +59,7 @@ An example code to call this function is
         decoded_bytes = ser_bytes
  
 ```       
--AO: Write the analogue channel<br/>
+- AO: Write the analogue channel<br/>
 ```
 AO2,1v
 ```
@@ -76,7 +76,7 @@ An example Python code is
         ser.write(AO6out.encode('utf-8'))
 
 ```
--II: Read the I2C channel<br/>
+- II: Read the I2C channel<br/>
 ```
 II
 ```
@@ -91,7 +91,7 @@ An example Python code call this function
         return(float(ser_bytes))
 
 ```
--FB: Start the feedback control<br/>
+- FB: Start the feedback control<br/>
 ```
 FB1,19,1,2,3
 ```
@@ -107,4 +107,4 @@ an example python code to call this function is
             ser.write(b'B')
             time.sleep(0.1)         
 ```
--B: Stop the feedback control<br/>
+- B: Stop the feedback control<br/>
