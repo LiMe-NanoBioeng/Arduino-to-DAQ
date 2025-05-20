@@ -55,7 +55,6 @@ An example code to call this function is
         ser_bytes = ser.readline()
         ser_bytes = ser_bytes.decode('utf-8').strip()
         decoded_bytes = ser_bytes
- 
 ```       
 - AO: Write the analogue channel<br/>
 ```
@@ -72,7 +71,6 @@ An example Python code is
         ser.write(b'B')
         time.sleep(0.1)
         ser.write(AO6out.encode('utf-8'))
-
 ```
 - II: Read the I2C channel<br/>
 ```
@@ -87,7 +85,6 @@ An example Python code call this function
         ser_bytes = ser.readline()
         ser_bytes=ser_bytes.decode('utf-8').rstrip()
         return(float(ser_bytes))
-
 ```
 - FB: Start the feedback control<br/>
 ```
