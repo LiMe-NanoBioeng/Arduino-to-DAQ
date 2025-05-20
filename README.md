@@ -23,11 +23,11 @@ Arduino program for a serial port DAQ.  <br/>
 
 ```
         
-- DP: Rapidly modulate the digital channel High and then Low as<br/>
+- PP: Rapidly modulate the digital channel High and then Low as<br/>
 ```
-DP1,10,10,2,10
+PP1:2,10,10,2,10
 ```
-DP(channel num),delay time (ms), duration (ms),channel number of sensor, threshold of the sensor read to stop<br/>
+PP(start ch #):(end ch #),delay time (ms), duration (ms),ch # of sensor, threshold of the sensor read to stop<br/>
 
 
 ```
@@ -42,11 +42,11 @@ DP(channel num),delay time (ms), duration (ms),channel number of sensor, thresho
 ```
 AI1:3
 ```
-from channel 1 to channel 3<br/>
+from ch 1 to ch 3<br/>
 ```
 AI1,3
 ```
-channel 1 and channel 3<br/>
+ch 1 and ch 3<br/>
 
 An example code to call this function is
 
@@ -96,7 +96,7 @@ An example Python code call this function
 FB1,19,1,2,3
 ```
 FB analogue channel number, setpoint, proportional, integral, differential control parameters<br/>
-an example python code to call this function is
+An example Python code to call this function is
 ```
     def ArduinoFB(value,vNumA,setpoint,Kp,Ki,Kd):
         if value==True:
