@@ -32,7 +32,7 @@ analogue channel 2, number 0-255 corresponding to 0-5V, unit<br/>
 ```
 II
 ```
-an example python code is
+An example Python code call this function
 
 ```
     def ArduinoI2C():
@@ -44,4 +44,17 @@ an example python code is
 
 ```
 -F: Start the feedback control<br/>
+an example python code to call this function is
+
+```
+    def ArduinoFB(value,vNumA,setpoint,Kp,Ki,Kd):
+        if value==True:
+            text='FB' + str(vNumA) + ',' + str(setpoint) + ',' + str(Kp) + ',' + str(Ki) + ',' + str(Kd) +'\n'
+            ser.write(text.encode('utf-8'))
+            time.sleep(0.1)
+        else:
+            ser.write(b'B')
+            time.sleep(0.1)
+            
+```
 -B: Stop the feedback control<br/>
