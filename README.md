@@ -1,4 +1,4 @@
-# Arduino-to-DAQ ver2 Serial_base_v20250202<br/>
+# Arduino-to-DAQ ver Serial_base_v20250202<br/>
 
 Arduino program for a serial port DAQ.  <br/>
 ## Command list<br/>
