@@ -23,6 +23,18 @@ from channel 1 to channel 3<br/>
 AI1,3
 ```
 channel 1 and channel 3<br/>
+
+An example code to call this function is
+
+```
+    def ArduinoAI():
+        ser.write(b'AI7,8\n')
+        time.sleep(0.01)
+        ser_bytes = ser.readline()
+        ser_bytes = ser_bytes.decode('utf-8').strip()
+        decoded_bytes = ser_bytes
+ 
+```       
 -AO: Write the analogue channel<br/>
 ```
 AO2,1v
