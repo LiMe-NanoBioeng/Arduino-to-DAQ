@@ -36,6 +36,8 @@ DP(channel num),delay time (ms), duration (ms),channel number of sensor, thresho
         text = 'PP'+str(ch1)+','+str(ch2)+','+str(int(delay))+','+str(width)+','+'8'+','+str(int(threshold))+'\n' #use for two valves in pulse
         ser.write(text.encode('utf-8'))
         #time.sleep(delay+width)
+```
+
 -AI: Read the analogue channel<br/>
 ```
 AI1:3
