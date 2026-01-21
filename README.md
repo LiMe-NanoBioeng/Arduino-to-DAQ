@@ -25,7 +25,7 @@ Arduino program for a serial port DAQ.  <br/>
 ```
 PP1:2,10,10,2,10
 ```
-PP(start ch #):(end ch #),delay time (ms), duration (ms),ch # of sensor, threshold of the sensor read to stop<br/>
+PP(start ch #):(end ch #),delay time (ms), duration (ms), (ch # of sensor), threshold of the sensor read to stop<br/>
 
 
 ```
