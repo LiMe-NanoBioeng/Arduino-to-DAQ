@@ -23,7 +23,8 @@ int aoDuty=0.0;
 int vNumA =9;//9/9/2024 K2
 //difine ten valves
 //const int Valvepins[]={1,22,21,15,20,16,19,14,18};
-const int Valvepins[]={1,7,15,16,14,22,21,20,19,18,23};
+//const int Valvepins[]={1,7,15,16,14,22,21,20,19,18,23};
+const int Valvepins[]={1,7,15,16,14,22,21,20,19,18,23,0,11}; //add JM 2026/04/29
 const int numValves = 11;
 int val = 0;
 //const int pressReg=4;
